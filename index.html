@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simple File Login</title>
+<style>
+    body {
+      font-family: Arial;
+      background: #eef3f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+ 
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+ 
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+ 
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+ 
+    #msg {
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+</style>
+</head>
+<body>
+ 
+<div class="box">
+<h2>Login</h2>
+ 
+  <input id="user" placeholder="Username">
+<input id="pass" type="password" placeholder="Password">
+ 
+  <button onclick="login()">Login</button>
+ 
+  <div id="msg"></div>
+</div>
+ 
+<script>
+  // "File-based" users (simulating a file)
+  const users = [
+    { username: "jerome", password: "1234" },
+    { username: "student", password: "abc" }
+  ];
+ 
+  function login() {
+    const u = document.getElementById("user").value;
+    const p = document.getElementById("pass").value;
+    const msg = document.getElementById("msg");
+ 
+    const found = users.find(user =>
+      user.username === u && user.password === p
+    );
+ 
+    if (found) {
+      msg.style.color = "green";
+      msg.textContent = "Login successful!";
+    } else {
+      msg.style.color = "red";
+      msg.textContent = "Wrong username or password";
+    }
+  }
+</script>
+ 
+</body>
+</html>
