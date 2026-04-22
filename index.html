@@ -1,98 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Simple File Login</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Supabase Login</title>
 <style>
     body {
-      font-family: Arial;
-      background: #eef3f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: Arial, sans-serif;
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 20px;
     }
- 
-    .box {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      width: 320px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
- 
     input, button {
       width: 100%;
       padding: 10px;
-      margin-top: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
     }
- 
-    button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
- 
-    #msg {
-      margin-top: 10px;
-      font-weight: bold;
-      text-align: center;
+    #message {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #f59ddb;
     }
 </style>
 </head>
 <body>
+<h1>Sign up / Log in</h1>
  
-<div class="box">
-<h2>Login</h2>
+  <input type="email" id="email" placeholder="Email" />
+<input type="password" id="password" placeholder="Password" />
  
-  <input id="user" placeholder="Username">
-<input id="pass" type="password" placeholder="Password">
+  <button id="signupBtn">Sign up</button>
+<button id="loginBtn">Log in</button>
+<button id="logoutBtn">Log out</button>
  
-  <button onclick="login()">Login</button>
+  <div id="message">Ready.</div>
  
-  <div id="msg"></div>
-</div>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
  
-<script>
-  // "File-based" users (simulating a file)
-  const users = [
-    { username: "jerome", password: "1234" },
-    { username: "student", password: "abc" },
-    { username: "matthew", password: "hager" }
-  ];
- 
-  function login() {
-    const u = document.getElementById("user").value.trim();
-    const p = document.getElementById("pass").value.trim();
-    const msg = document.getElementById("msg");
- 
-    const found = users.find(user =>
-      user.username === u && user.password === p
-    );
- 
-    if (found) {
-      msg.style.color = "green";
-      msg.textContent = "Login successful!";
+       const supabaseUrl = 'https://jwlbcmapgdiljmgnqoxe.supabase.co'
+      const supabaseAnonKey = 'sb_publishable_HsEO0dQTkP3HJAy80pfMqQ_EZRay4GJ'
 
-    const hour = new Date().getHours();   
-    let greeting = "";                    
-
-    if (hour < 12) {                      
-      greeting = "Good morning!";         
-    } else if (hour < 18) {               
-      greeting = "Good afternoon!";       
-    } else {                              
-      greeting = "Good evening!";         
+ 
+    const emailInput = document.getElementById('email')
+    const passwordInput = document.getElementById('password')
+    const message = document.getElementById('message')
+ 
+    function showMessage(text) {
+      message.textContent = text
     }
-
-    alert(greeting);          
-    } else {
-      msg.style.color = "red";
-      msg.textContent = "Wrong username or password";
+ 
+    document.getElementById('signupBtn').addEventListener('click', async () => {
+      const email = emailInput.value.trim()
+      const password = passwordInput.value
+ 
+      if (!email || !password) {
+        showMessage('Please enter an email and password.')
+        return
+      }
+ 
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      })
+ 
+      if (error) {
+        showMessage('Sign up error: ' + error.message)
+        return
+      }
+ 
+      if (data.user) {
+        showMessage('Account created. Check your email if confirmation is enabled.')
+      } else {
+        showMessage('Sign up complete.')
+      }
+    })
+ 
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = emailInput.value.trim()
+      const password = passwordInput.value
+ 
+      if (!email || !password) {
+        showMessage('Please enter an email and password.')
+        return
+      }
+ 
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+ 
+      if (error) {
+        showMessage('Login error: ' + error.message)
+        return
+      }
+ 
+      showMessage('Logged in as: ' + data.user.email)
+      console.log('Session:', data.session)
+    })
+ 
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut()
+ 
+      if (error) {
+        showMessage('Logout error: ' + error.message)
+        return
+      }
+ 
+      showMessage('Logged out.')
+    })
+ 
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) {
+      showMessage('Already logged in as: ' + session.user.email)
     }
-  }
+ 
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth event:', event, session)
+    })
 </script>
- 
 </body>
 </html>
