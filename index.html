@@ -38,6 +38,7 @@
 <table>
   <thead>
     <tr>
+      <th>ID</th>
       <th>firstname</th>
       <th>lastname</th>
       <th>class</th>
@@ -72,6 +73,7 @@
     data.forEach(row => {
       const tr = document.createElement('tr')
       tr.innerHTML = `
+        <td>${row.id}</td>
         <td>${row.firstname}</td>
         <td>${row.lastname}</td>
         <td>${row.class}</td>
