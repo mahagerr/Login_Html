@@ -3,95 +3,290 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Student Table</title>
-
+<title>Supabase Students Diagnostic</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 20px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-
-  th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-  }
-
-  th {
-    background: #f2f2f2;
-  }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #f7f7f7;
+      color: #222;
+    }
+ 
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+ 
+    h1 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+ 
+    .card {
+      background: #fff;
+      border: 1px solid #d9d9d9;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+ 
+    #status {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+ 
+    .ok {
+      color: #0a7a33;
+    }
+ 
+    .warn {
+      color: #9a6700;
+    }
+ 
+    .error {
+      color: #b00020;
+    }
+ 
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+ 
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+ 
+    th {
+      background: #f2f2f2;
+    }
+ 
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #f6f6f6;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+ 
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+ 
+    .small {
+      color: #666;
+      font-size: 0.95rem;
+    }
+ 
+    .log-line {
+      padding: 4px 0;
+      border-bottom: 1px solid #eee;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+ 
+    .log-line:last-child {
+      border-bottom: none;
+    }
 </style>
 </head>
-
 <body>
-
-<h1>Student Scores</h1>
-
+<div class="container">
+<h1>Students</h1>
+<p class="small">
+      This page checks whether your GitHub-hosted site can access the
+<code>students</code> table in Supabase.
+</p>
+ 
+    <div class="card">
+<div id="status" class="warn">Page loaded. Waiting to start test...</div>
+<div id="log"></div>
+</div>
+ 
+    <div class="card">
+<h2>Returned Data</h2>
 <table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>firstname</th>
-      <th>lastname</th>
-      <th>class</th>
-      <th>score</th>
-    </tr>
-  </thead>
-  <tbody id="data-body"></tbody>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody id="table-body">
+<tr>
+<td colspan="3">No data loaded yet.</td>
+</tr>
+</tbody>
 </table>
-
-<script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-  const supabaseUrl = 'https://neamnczhparfzzonpocu.supabase.co'
-  const supabaseAnonKey = 'sb_publishable_HsEO0dQTkP3HJAy80pfMqQ_EZRay4GJ'
-
-  const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-  async function loadTable() {
-    const { data, error } = await supabase
-      .from('students')
-      .select('*')
-
-    console.log("DATA:", data)
-    console.log("ERROR:", error)
-
-    if (error) {
-      alert("Error loading data — check console")
-      return
+</div>
+ 
+    <div class="card">
+<h2>Debug Output</h2>
+<pre id="debug">Nothing yet.</pre>
+</div>
+</div>
+ 
+  <script>
+    const supabaseUrl = 'https://neamnczhparfzzonpocu.supabase.co';
+    const supabaseKey = 'sb_publishable_TNTrL9tGgE-U150UyzRgww_KuTBCFR0';
+ 
+    const statusEl = document.getElementById('status');
+    const logEl = document.getElementById('log');
+    const tableBody = document.getElementById('table-body');
+    const debugEl = document.getElementById('debug');
+ 
+    function setStatus(message, className = 'warn') {
+      statusEl.textContent = message;
+      statusEl.className = className;
     }
-
-    const tbody = document.getElementById('data-body')
-    tbody.innerHTML = ""
-
-    if (!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5">No data found (RLS may be blocking access)</td></tr>`
-      return
+ 
+    function addLog(message) {
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      div.textContent = message;
+      logEl.appendChild(div);
     }
-
-    data.forEach(row => {
-      const tr = document.createElement('tr')
-      tr.innerHTML = `
-        <td>${row.id}</td>
-        <td>${row.firstname}</td>
-        <td>${row.lastname}</td>
-        <td>${row.class}</td>
-        <td>${row.score}</td>
-      `
-      tbody.appendChild(tr)
-    })
-  }
-
-  loadTable()
+ 
+    function setDebug(obj) {
+      if (typeof obj === 'string') {
+        debugEl.textContent = obj;
+      } else {
+        debugEl.textContent = JSON.stringify(obj, null, 2);
+      }
+    }
+ 
+    async function runTest() {
+      setStatus('Script started. Preparing request...', 'warn');
+      addLog('Script started');
+      addLog('Supabase URL: ' + supabaseUrl);
+      addLog('Table: students');
+ 
+      const requestUrl = `${supabaseUrl}/rest/v1/students?select=id,name,score&order=id.asc`;
+      addLog('Request URL built');
+ 
+      const controller = new AbortController();
+      const timeoutMs = 15000;
+ 
+      const timeoutId = setTimeout(() => {
+        addLog('Timeout reached after ' + timeoutMs + 'ms');
+        controller.abort();
+      }, timeoutMs);
+ 
+      try {
+        setStatus('Sending request to Supabase...', 'warn');
+        addLog('Fetch started');
+ 
+        const response = await fetch(requestUrl, {
+          method: 'GET',
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Accept': 'application/json'
+          },
+          signal: controller.signal
+        });
+ 
+        clearTimeout(timeoutId);
+ 
+        addLog('Response received');
+        addLog('HTTP status: ' + response.status + ' ' + response.statusText);
+ 
+        const responseText = await response.text();
+        addLog('Response body read');
+ 
+        let parsed;
+        try {
+          parsed = JSON.parse(responseText);
+          addLog('Response parsed as JSON');
+        } catch {
+          parsed = null;
+          addLog('Response was not valid JSON');
+        }
+ 
+        if (!response.ok) {
+          setStatus(`HTTP error: ${response.status} ${response.statusText}`, 'error');
+          tableBody.innerHTML = `<tr><td colspan="3">Request failed. See debug output below.</td></tr>`;
+          setDebug({
+            ok: false,
+            status: response.status,
+            statusText: response.statusText,
+            body: responseText
+          });
+          return;
+        }
+ 
+        if (!Array.isArray(parsed)) {
+          setStatus('Unexpected response format', 'error');
+          tableBody.innerHTML = `<tr><td colspan="3">Unexpected response format. See debug output.</td></tr>`;
+          setDebug({
+            ok: true,
+            butUnexpectedFormat: true,
+            body: responseText
+          });
+          return;
+        }
+ 
+        if (parsed.length === 0) {
+          setStatus('Connected, but no rows were returned.', 'warn');
+          tableBody.innerHTML = `<tr><td colspan="3">No records found.</td></tr>`;
+          setDebug({
+            ok: true,
+            rowsReturned: 0,
+            data: parsed
+          });
+          return;
+        }
+ 
+        setStatus(`Success: loaded ${parsed.length} row(s).`, 'ok');
+        tableBody.innerHTML = '';
+ 
+        parsed.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+<td>${row.id ?? ''}</td>
+<td>${row.name ?? ''}</td>
+<td>${row.score ?? ''}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+ 
+        setDebug({
+          ok: true,
+          rowsReturned: parsed.length,
+          data: parsed
+        });
+ 
+      } catch (err) {
+        clearTimeout(timeoutId);
+ 
+        let message = err.message || 'Unknown error';
+        if (err.name === 'AbortError') {
+          message = 'Request timed out after 15 seconds';
+        }
+ 
+        setStatus('Fetch error: ' + message, 'error');
+        tableBody.innerHTML = `<tr><td colspan="3">No data shown.</td></tr>`;
+        setDebug({
+          errorName: err.name,
+          errorMessage: err.message,
+          suggestion: 'If this still fails now, we are into key, policy, or API settings rather than the URL.'
+        });
+ 
+        addLog('Fetch failed: ' + err.name + ' - ' + err.message);
+      }
+    }
+ 
+    runTest();
 </script>
-
 </body>
 </html>
