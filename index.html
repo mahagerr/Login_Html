@@ -114,7 +114,7 @@ async function runTest() {
   addLog('Supabase URL: ' + supabaseUrl);
   addLog('Table: students');
 
-  // ✅ FIXED: Correct column names
+  // ✔ Correct column names
   const requestUrl = `${supabaseUrl}/rest/v1/students?select=id,firstname,lastname,classname,score&order=id.asc`;
   addLog('Request URL built');
 
