@@ -45,9 +45,7 @@
       <th>score</th>
     </tr>
   </thead>
-  <tbody id="data-body">
-    
-  </tbody>
+  <tbody id="data-body"></tbody>
 </table>
 
 <script type="module">
@@ -55,20 +53,29 @@
 
   const supabaseUrl = 'https://neamnczhparfzzonpocu.supabase.co'
   const supabaseAnonKey = 'sb_publishable_HsEO0dQTkP3HJAy80pfMqQ_EZRay4GJ'
+
   const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
   async function loadTable() {
     const { data, error } = await supabase
-      .from('students')  
+      .from('students')
       .select('*')
 
+    console.log("DATA:", data)
+    console.log("ERROR:", error)
+
     if (error) {
-      console.error('Error loading data:', error)
+      alert("Error loading data — check console")
       return
     }
 
     const tbody = document.getElementById('data-body')
     tbody.innerHTML = ""
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5">No data found (RLS may be blocking access)</td></tr>`
+      return
+    }
 
     data.forEach(row => {
       const tr = document.createElement('tr')
