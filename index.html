@@ -137,7 +137,6 @@ async function runTest() {
   setStatus('Preparing request…', 'warn');
   addLog('Starting test…');
 
-  // ⭐ Request BOTH possible timestamp column names
   const requestUrl =
     `${supabaseUrl}/rest/v1/students?select=id,created_at,"created at",firstname,lastname,classname,score&order=id.asc`;
 
