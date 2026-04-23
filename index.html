@@ -137,9 +137,9 @@ async function runTest() {
   setStatus('Preparing request…', 'warn');
   addLog('Starting test…');
 
-  // ✔ Correct column order
+  // ⭐ Request BOTH possible timestamp column names
   const requestUrl =
-    `${supabaseUrl}/rest/v1/students?select=id,created_at,firstname,lastname,classname,score&order=id.asc`;
+    `${supabaseUrl}/rest/v1/students?select=id,created_at,"created at",firstname,lastname,classname,score&order=id.asc`;
 
   addLog('Request URL: ' + requestUrl);
 
@@ -169,46 +169,4 @@ async function runTest() {
     }
 
     if (!Array.isArray(json)) {
-      setStatus('Unexpected response format', 'error');
-      tableBody.innerHTML = `<tr><td colspan="6">Unexpected format.</td></tr>`;
-      setDebug(text);
-      return;
-    }
-
-    if (json.length === 0) {
-      setStatus('Connected, but no rows returned.', 'warn');
-      tableBody.innerHTML = `<tr><td colspan="6">No records found.</td></tr>`;
-      setDebug(json);
-      return;
-    }
-
-    setStatus(`Success: Loaded ${json.length} rows.`, 'ok');
-
-    tableBody.innerHTML = '';
-    json.forEach(row => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${row.id}</td>
-        <td>${row.created_at}</td>
-        <td>${row.firstname}</td>
-        <td>${row.lastname}</td>
-        <td>${row.classname}</td>
-        <td>${row.score}</td>
-      `;
-      tableBody.appendChild(tr);
-    });
-
-    setDebug(json);
-
-  } catch (err) {
-    setStatus('Fetch error: ' + err.message, 'error');
-    tableBody.innerHTML = `<tr><td colspan="6">Error occurred.</td></tr>`;
-    setDebug(err);
-  }
-}
-
-runTest();
-</script>
-
-</body>
-</html>
+      setStatus
