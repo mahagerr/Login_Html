@@ -3,771 +3,493 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- 
-  <!--
-    HTML:
-    HTML builds the structure of the webpage.
- 
-    It creates:
-    - headings
-    - paragraphs
-    - input boxes
-    - buttons
-    - tables
-    - sections
- 
-    Think of HTML like the skeleton of the page.
-    It tells the browser what should exist.
-  -->
 <title>Students CRUD Demo</title>
- 
-  <style>
-    /*
-      CSS:
-      CSS controls how the page LOOKS.
- 
-      HTML creates the parts.
-      CSS styles the parts.
- 
-      CSS can change:
-      - colours
-      - borders
-      - size
-      - spacing
-      - alignment
-      - layout
- 
-      A CSS rule looks like this:
-      selector {
-        property: value;
-      }
-    */
- 
-    /*
-      The body styles the whole page.
-      This is a good place to set the default font,
-      page background colour and page spacing.
-    */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 24px;
-      background: #f7f7f7;
-      color: #222;
-    }
- 
-    /*
-      .container is the main wrapper for the page.
-      It keeps everything centred and stops the page becoming too wide.
-    */
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
- 
-    /*
-      .card creates the white content boxes.
-      These are useful for separating the page into clear sections.
-    */
-    .card {
-      background: #fff;
-      border: 1px solid #d9d9d9;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
- 
-    /*
-      Remove the default space above headings.
-    */
-    h1, h2, h3 {
-      margin-top: 0;
-    }
- 
-    /*
-      These classes colour text depending on meaning.
-      JavaScript adds these classes later.
-    */
-    .ok { color: #0a7a33; }
-    .warn { color: #9a6700; }
-    .error { color: #b00020; }
- 
-    /*
-      These are the status messages shown to the user.
-      font-weight: bold makes them easier to notice.
-    */
-    #status, #form-status {
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
- 
-    /*
-      .grid uses CSS Grid layout.
-      It arranges the input boxes in neat columns.
-      repeat(auto-fit, minmax(...)) makes it responsive,
-      so the layout adjusts on smaller screens.
-    */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 12px;
-    }
- 
-    /*
-      .field wraps a label and its input together.
-      flex-direction: column makes the label sit above the input.
-    */
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
- 
-    /*
-      This styles all input boxes.
-    */
-    input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
- 
-    /*
-      .button-row arranges the buttons in a line.
-      flex-wrap lets them move onto the next line if needed.
-    */
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-    }
- 
-    /*
-      This styles all buttons.
-      cursor: pointer changes the mouse pointer to a hand.
-    */
-    button {
-      padding: 12px 16px;
-      border: none;
-      border-radius: 6px;
-      background: #2563eb;
-      color: white;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
- 
-    /*
-      This changes the button colour when the mouse hovers over it.
-    */
-    button:hover {
-      background: #1d4ed8;
-    }
- 
-    /*
-      Extra button styles for special actions.
-      These make the buttons easier to tell apart.
-    */
-    .delete-btn {
-      background: #dc2626;
-    }
- 
-    .delete-btn:hover {
-      background: #b91c1c;
-    }
- 
-    .secondary-btn {
-      background: #475569;
-    }
- 
-    .secondary-btn:hover {
-      background: #334155;
-    }
- 
-    /*
-      Styles for the data table.
-      border-collapse joins borders into single neat lines.
-    */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
- 
-    /*
-      th = table heading cell
-      td = normal table data cell
-    */
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px 12px;
-      text-align: left;
-    }
- 
-    /*
-      Give the top row of the table a light grey background.
-    */
-    th {
-      background: #f2f2f2;
-    }
- 
-    /*
-      The pre element is useful for debug output.
-      It keeps spacing and line breaks exactly as written.
-    */
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      background: #f6f6f6;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 12px;
-      margin: 0;
-    }
- 
-    /*
-      Small helper class for less important text.
-    */
-    .small {
-      color: #666;
-    }
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 24px;
+    background: #f7f7f7;
+    color: #222;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  h1, h2, h3 {
+    margin-top: 0;
+  }
+
+  .ok { color: #0a7a33; }
+  .warn { color: #9a6700; }
+  .error { color: #b00020; }
+
+  #status, #form-status {
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  button {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #1d4ed8;
+  }
+
+  .delete-btn {
+    background: #dc2626;
+  }
+
+  .delete-btn:hover {
+    background: #b91c1c;
+  }
+
+  .secondary-btn {
+    background: #475569;
+  }
+
+  .secondary-btn:hover {
+    background: #334155;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  th {
+    background: #f2f2f2;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: #f6f6f6;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 0;
+  }
+
+  .small {
+    color: #666;
+  }
 </style>
 </head>
 <body>
-<!--
-    Everything inside <body> appears on the webpage.
-    The page is split into cards, each with a clear job.
-  -->
- 
-  <div class="container">
-<!--
-      Main heading for the page.
-      There is usually one h1 per page.
-    -->
+
+<div class="container">
+
 <h1>Students</h1>
- 
-    <p class="small">
-      This page can create, read, update and delete rows in the
-<code>students</code> table.
-</p>
- 
-    <!--
-      CARD 1:
-      This is the form section.
- 
-      It lets the user:
-      - add a new student
-      - update an existing student
-      - delete a student by ID
-    -->
+
 <div class="card">
-<h2>Student Form</h2>
-<p class="small">
-        Use:
-<br>• <strong>Add Student</strong> for a new row
-<br>• <strong>Update Student</strong> to change an existing row by ID
-<br>• <strong>Delete Student</strong> to remove a row by ID
-</p>
- 
-      <div id="form-status" class="warn">Ready.</div>
- 
-      <!--
-        These input boxes collect information from the user.
-        The ID box is needed for update and delete.
-        The Name and Score boxes are used for add and update.
-      -->
-<div class="grid">
-<div class="field">
-<label for="student-id">Student ID</label>
-<input id="student-id" type="number" placeholder="Needed for update/delete">
+  <h2>Student Form</h2>
+  <p class="small">
+    Use:
+    <br>• <strong>Add Student</strong> for a new row
+    <br>• <strong>Update Student</strong> to change an existing row by ID
+    <br>• <strong>Delete Student</strong> to remove a row by ID
+  </p>
+
+  <div id="form-status" class="warn">Ready.</div>
+
+  <div class="grid">
+
+    <div class="field">
+      <label for="student-id">Student ID</label>
+      <input id="student-id" type="number" placeholder="Needed for update/delete">
+    </div>
+
+    <div class="field">
+      <label for="student-firstname">First Name</label>
+      <input id="student-firstname" type="text" placeholder="Enter first name">
+    </div>
+
+    <div class="field">
+      <label for="student-lastname">Last Name</label>
+      <input id="student-lastname" type="text" placeholder="Enter last name">
+    </div>
+
+    <div class="field">
+      <label for="student-classname">Class Name</label>
+      <input id="student-classname" type="text" placeholder="Enter class name">
+    </div>
+
+    <div class="field">
+      <label for="student-score">Score</label>
+      <input id="student-score" type="number" placeholder="Enter score">
+    </div>
+
+  </div>
+
+  <div class="button-row">
+    <button id="add-btn">Add Student</button>
+    <button id="update-btn" class="secondary-btn">Update Student</button>
+    <button id="delete-btn" class="delete-btn">Delete Student</button>
+    <button id="clear-btn" class="secondary-btn">Clear Boxes</button>
+  </div>
 </div>
- 
-        <div class="field">
-<label for="student-name">Name</label>
-<input id="student-name" type="text" placeholder="Enter name">
-</div>
- 
-        <div class="field">
-<label for="student-score">Score</label>
-<input id="student-score" type="number" placeholder="Enter score">
-</div>
-</div>
- 
-      <!--
-        These buttons trigger different JavaScript functions.
-      -->
-<div class="button-row">
-<button id="add-btn">Add Student</button>
-<button id="update-btn" class="secondary-btn">Update Student</button>
-<button id="delete-btn" class="delete-btn">Delete Student</button>
-<button id="clear-btn" class="secondary-btn">Clear Boxes</button>
-</div>
-</div>
- 
-    <!--
-      CARD 2:
-      This status area shows messages such as:
-      - loading
-      - success
-      - error
-    -->
+
 <div class="card">
-<h2>Status</h2>
-<div id="status" class="warn">Loading students...</div>
+  <h2>Status</h2>
+  <div id="status" class="warn">Loading students...</div>
 </div>
- 
-    <!--
-      CARD 3:
-      This table shows the rows returned from Supabase.
- 
-      thead = heading part of the table
-      tbody = body part of the table
- 
-      JavaScript will fill the tbody with live data.
-    -->
+
 <div class="card">
-<h2>Students Table</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Name</th>
-<th>Score</th>
-</tr>
-</thead>
-<tbody id="table-body">
-<tr>
-<td colspan="3">No data loaded yet.</td>
-</tr>
-</tbody>
-</table>
+  <h2>Students Table</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Class</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <tr>
+        <td colspan="5">No data loaded yet.</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
- 
-    <!--
-      CARD 4:
-      This debug box is useful while testing.
-      It can show returned JSON or error messages.
-    -->
+
 <div class="card">
-<h2>Debug Output</h2>
-<pre id="debug">Nothing yet.</pre>
+  <h2>Debug Output</h2>
+  <pre id="debug">Nothing yet.</pre>
 </div>
+
 </div>
- 
-  <script>
-    /*
-      JAVASCRIPT:
-      JavaScript makes the page interactive.
- 
-      HTML builds the page.
-      CSS styles the page.
-      JavaScript makes it do things.
- 
-      JavaScript can:
-      - react to button clicks
-      - send requests to a server
-      - receive data
-      - update the page
-    */
- 
-    /*
-      API:
-      An API is a way for one program to talk to another.
- 
-      In this project:
-      - the webpage is one program
-      - Supabase is another program
-      - the API is how they communicate
- 
-      The webpage sends requests to Supabase's REST API.
-    */
- 
-    /*
-      JSON:
-      JSON stands for JavaScript Object Notation.
- 
-      It is a common way to send structured data between systems.
- 
-      Example:
-      [
-        { "id": 1, "name": "Alice", "score": 82 },
-        { "id": 2, "name": "Ben", "score": 74 }
-      ]
-    */
- 
-    /*
-      ASYNCHRONOUS CODE:
-      Requests across the internet take time.
- 
-      async means:
-      "this function includes something that may take time"
- 
-      await means:
-      "pause here until the result comes back"
- 
-      This stops the code from using data before it has arrived.
-    */
- 
-    /*
-      This is the web address of your Supabase project.
-    */
-    const supabaseUrl = 'https://neamnczhparfzzonpocu.supabase.co';
- 
-    /*
-      This is the publishable API key.
- 
-      It identifies the project.
-      It is designed for frontend/browser use.
- 
-      Never use the secret key in a public webpage.
-    */
-    const supabaseKey = 'sb_publishable_TNTrL9tGgE-U150UyzRgww_KuTBCFR0';
- 
-    /*
-      document.getElementById finds HTML elements by their id.
-      We store them in variables so we can change them later.
-    */
-    const statusEl = document.getElementById('status');
-    const formStatusEl = document.getElementById('form-status');
-    const tableBody = document.getElementById('table-body');
-    const debugEl = document.getElementById('debug');
- 
-    const studentIdInput = document.getElementById('student-id');
-    const studentNameInput = document.getElementById('student-name');
-    const studentScoreInput = document.getElementById('student-score');
- 
-    const addBtn = document.getElementById('add-btn');
-    const updateBtn = document.getElementById('update-btn');
-    const deleteBtn = document.getElementById('delete-btn');
-    const clearBtn = document.getElementById('clear-btn');
- 
-    /*
-      This updates the main status message.
-    */
-    function setStatus(message, className = 'warn') {
-      statusEl.textContent = message;
-      statusEl.className = className;
-    }
- 
-    /*
-      This updates the form message.
-    */
-    function setFormStatus(message, className = 'warn') {
-      formStatusEl.textContent = message;
-      formStatusEl.className = className;
-    }
- 
-    /*
-      This prints text or JSON into the debug box.
-      JSON.stringify turns JavaScript data into readable text.
-    */
-    function setDebug(obj) {
-      debugEl.textContent = typeof obj === 'string'
-        ? obj
-        : JSON.stringify(obj, null, 2);
-    }
- 
-    /*
-      These helper functions get values from the input boxes.
-    */
-    function getIdValue() {
-      return Number(studentIdInput.value);
-    }
- 
-    function getNameValue() {
-      return studentNameInput.value.trim();
-    }
- 
-    function getScoreValue() {
-      return Number(studentScoreInput.value);
-    }
- 
-    /*
-      This clears all the input boxes.
-    */
-    function clearInputs() {
-      studentIdInput.value = '';
-      studentNameInput.value = '';
-      studentScoreInput.value = '';
-      setFormStatus('Boxes cleared.', 'warn');
-    }
- 
-    /*
-      READ / SELECT:
-      This function loads students from the database.
- 
-      GET means:
-      "please send me data"
-    */
-    async function loadStudents() {
-      try {
-        const response = await fetch(
-          `${supabaseUrl}/rest/v1/students?select=id,name,score&order=id.asc`,
-          {
-            method: 'GET',
-            headers: {
-              /*
-                headers send extra information with the request
-              */
-              apikey: supabaseKey,
-              Authorization: `Bearer ${supabaseKey}`,
-              Accept: 'application/json'
-            }
-          }
-        );
- 
-        const text = await response.text();
-        let data;
- 
-        try {
-          /*
-            JSON.parse converts JSON text into JavaScript data.
-          */
-          data = JSON.parse(text);
-        } catch {
-          data = null;
+
+<script>
+const supabaseUrl = 'https://neamnczhparfzzonpocu.supabase.co';
+const supabaseKey = 'sb_publishable_TNTrL9tGgE-U150UyzRgww_KuTBCFR0';
+
+const statusEl = document.getElementById('status');
+const formStatusEl = document.getElementById('form-status');
+const tableBody = document.getElementById('table-body');
+const debugEl = document.getElementById('debug');
+
+const studentIdInput = document.getElementById('student-id');
+const firstnameInput = document.getElementById('student-firstname');
+const lastnameInput = document.getElementById('student-lastname');
+const classnameInput = document.getElementById('student-classname');
+const scoreInput = document.getElementById('student-score');
+
+const addBtn = document.getElementById('add-btn');
+const updateBtn = document.getElementById('update-btn');
+const deleteBtn = document.getElementById('delete-btn');
+const clearBtn = document.getElementById('clear-btn');
+
+function setStatus(msg, cls = 'warn') {
+  statusEl.textContent = msg;
+  statusEl.className = cls;
+}
+
+function setFormStatus(msg, cls = 'warn') {
+  formStatusEl.textContent = msg;
+  formStatusEl.className = cls;
+}
+
+function setDebug(obj) {
+  debugEl.textContent = typeof obj === 'string'
+    ? obj
+    : JSON.stringify(obj, null, 2);
+}
+
+function getIdValue() {
+  return Number(studentIdInput.value);
+}
+
+function getFirstnameValue() {
+  return firstnameInput.value.trim();
+}
+
+function getLastnameValue() {
+  return lastnameInput.value.trim();
+}
+
+function getClassnameValue() {
+  return classnameInput.value.trim();
+}
+
+function getScoreValue() {
+  return Number(scoreInput.value);
+}
+
+function clearInputs() {
+  studentIdInput.value = '';
+  firstnameInput.value = '';
+  lastnameInput.value = '';
+  classnameInput.value = '';
+  scoreInput.value = '';
+  setFormStatus('Boxes cleared.', 'warn');
+}
+
+async function loadStudents() {
+  try {
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/students?select=id,firstname,lastname,classname,score&order=id.asc`,
+      {
+        method: 'GET',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          Accept: 'application/json'
         }
- 
-        if (!response.ok) {
-          setStatus(`GET failed: ${response.status} ${response.statusText}`, 'error');
-          setDebug(text);
-          return;
-        }
- 
-        if (!Array.isArray(data) || data.length === 0) {
-          setStatus('Connected, but no rows were returned.', 'warn');
-          tableBody.innerHTML = '<tr><td colspan="3">No records found.</td></tr>';
-          setDebug(data);
-          return;
-        }
- 
-        setStatus(`Loaded ${data.length} row(s).`, 'ok');
-        tableBody.innerHTML = '';
- 
-        /*
-          Loop through each returned row
-          and build a new table row in HTML.
-        */
-        data.forEach(row => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-<td>${row.id ?? ''}</td>
-<td>${row.name ?? ''}</td>
-<td>${row.score ?? ''}</td>
-          `;
-          tableBody.appendChild(tr);
-        });
- 
-        setDebug(data);
-      } catch (err) {
-        setStatus('Fetch error: ' + err.message, 'error');
-        setDebug({ error: err.message });
       }
+    );
+
+    const text = await response.text();
+    let data;
+
+    try { data = JSON.parse(text); }
+    catch { data = null; }
+
+    if (!response.ok) {
+      setStatus(`GET failed: ${response.status}`, 'error');
+      setDebug(text);
+      return;
     }
- 
-    /*
-      CREATE / INSERT:
-      This function adds a new student.
- 
-      POST means:
-      "I want to send new data to the server"
-    */
-    async function addStudent() {
-      const name = getNameValue();
-      const score = getScoreValue();
- 
-      /*
-        Validation:
-        Check the user typed sensible values.
-      */
-      if (!name) {
-        setFormStatus('Please enter a name.', 'error');
-        return;
-      }
- 
-      if (Number.isNaN(score)) {
-        setFormStatus('Please enter a valid score.', 'error');
-        return;
-      }
- 
-      setFormStatus('Adding student...', 'warn');
- 
-      try {
-        const response = await fetch(`${supabaseUrl}/rest/v1/students`, {
-          method: 'POST',
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-            Prefer: 'return=representation'
-          },
- 
-          /*
-            JSON.stringify converts JavaScript data into JSON text
-            so it can be sent to the server.
-          */
-          body: JSON.stringify([{ name, score }])
-        });
- 
-        const text = await response.text();
-        let data;
- 
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = text;
-        }
- 
-        if (!response.ok) {
-          setFormStatus(`Insert failed: ${response.status} ${response.statusText}`, 'error');
-          setDebug(data);
-          return;
-        }
- 
-        setFormStatus(`Added ${name} successfully.`, 'ok');
-        clearInputs();
-        await loadStudents();
-      } catch (err) {
-        setFormStatus('Insert error: ' + err.message, 'error');
-        setDebug({ error: err.message });
-      }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      setStatus('Connected, but no rows found.', 'warn');
+      tableBody.innerHTML = '<tr><td colspan="5">No records found.</td></tr>';
+      return;
     }
- 
-    /*
-      UPDATE:
-      This function changes an existing row.
- 
-      PATCH means:
-      "change part of an existing record"
- 
-      We use the ID to choose which row to update.
-    */
-    async function updateStudent() {
-      const id = getIdValue();
-      const name = getNameValue();
-      const score = getScoreValue();
- 
-      if (Number.isNaN(id)) {
-        setFormStatus('Please enter a student ID to update.', 'error');
-        return;
-      }
- 
-      if (!name) {
-        setFormStatus('Please enter a new name.', 'error');
-        return;
-      }
- 
-      if (Number.isNaN(score)) {
-        setFormStatus('Please enter a new score.', 'error');
-        return;
-      }
- 
-      setFormStatus(`Updating student ID ${id}...`, 'warn');
- 
-      try {
-        const response = await fetch(`${supabaseUrl}/rest/v1/students?id=eq.${id}`, {
-          method: 'PATCH',
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-            Prefer: 'return=representation'
-          },
-          body: JSON.stringify({ name, score })
-        });
- 
-        const text = await response.text();
-        let data;
- 
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = text;
-        }
- 
-        if (!response.ok) {
-          setFormStatus(`Update failed: ${response.status} ${response.statusText}`, 'error');
-          setDebug(data);
-          return;
-        }
- 
-        setFormStatus(`Updated student ID ${id} successfully.`, 'ok');
-        clearInputs();
-        await loadStudents();
-      } catch (err) {
-        setFormStatus('Update error: ' + err.message, 'error');
-        setDebug({ error: err.message });
-      }
+
+    setStatus(`Loaded ${data.length} row(s).`, 'ok');
+    tableBody.innerHTML = '';
+
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${row.id}</td>
+        <td>${row.firstname}</td>
+        <td>${row.lastname}</td>
+        <td>${row.classname}</td>
+        <td>${row.score}</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    setDebug(data);
+  } catch (err) {
+    setStatus('Fetch error: ' + err.message, 'error');
+    setDebug({ error: err.message });
+  }
+}
+
+async function addStudent() {
+  const firstname = getFirstnameValue();
+  const lastname = getLastnameValue();
+  const classname = getClassnameValue();
+  const score = getScoreValue();
+
+  if (!firstname) {
+    setFormStatus('Please enter a first name.', 'error');
+    return;
+  }
+
+  if (Number.isNaN(score)) {
+    setFormStatus('Please enter a valid score.', 'error');
+    return;
+  }
+
+  setFormStatus('Adding student...', 'warn');
+
+  try {
+    const response = await fetch(`${supabaseUrl}/rest/v1/students`, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation'
+      },
+      body: JSON.stringify([{
+        firstname,
+        lastname,
+        classname,
+        score
+      }])
+    });
+
+    const text = await response.text();
+    let data;
+
+    try { data = JSON.parse(text); }
+    catch { data = text; }
+
+    if (!response.ok) {
+      setFormStatus(`Insert failed: ${response.status}`, 'error');
+      setDebug(data);
+      return;
     }
- 
-    /*
-      DELETE:
-      This function removes a row from the table.
- 
-      DELETE means:
-      "remove this record"
- 
-      Again, we use the ID to choose which row to remove.
-    */
-    async function deleteStudent() {
-      const id = getIdValue();
- 
-      if (Number.isNaN(id)) {
-        setFormStatus('Please enter a student ID to delete.', 'error');
-        return;
-      }
- 
-      setFormStatus(`Deleting student ID ${id}...`, 'warn');
- 
-      try {
-        const response = await fetch(`${supabaseUrl}/rest/v1/students?id=eq.${id}`, {
-          method: 'DELETE',
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-            Prefer: 'return=representation'
-          }
-        });
- 
-        const text = await response.text();
-        let data;
- 
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = text;
-        }
- 
-        if (!response.ok) {
-          setFormStatus(`Delete failed: ${response.status} ${response.statusText}`, 'error');
-          setDebug(data);
-          return;
-        }
- 
-        setFormStatus(`Deleted student ID ${id} successfully.`, 'ok');
-        clearInputs();
-        await loadStudents();
-      } catch (err) {
-        setFormStatus('Delete error: ' + err.message, 'error');
-        setDebug({ error: err.message });
-      }
+
+    setFormStatus(`Added ${firstname} successfully.`, 'ok');
+    clearInputs();
+    await loadStudents();
+  } catch (err) {
+    setFormStatus('Insert error: ' + err.message, 'error');
+    setDebug({ error: err.message });
+  }
+}
+
+async function updateStudent() {
+  const id = getIdValue();
+  const firstname = getFirstnameValue();
+  const lastname = getLastnameValue();
+  const classname = getClassnameValue();
+  const score = getScoreValue();
+
+  if (Number.isNaN(id)) {
+    setFormStatus('Please enter a student ID.', 'error');
+    return;
+  }
+
+  setFormStatus(`Updating student ID ${id}...`, 'warn');
+
+  try {
+    const response = await fetch(`${supabaseUrl}/rest/v1/students?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation'
+      },
+      body: JSON.stringify({
+        firstname,
+        lastname,
+        classname,
+        score
+      })
+    });
+
+    const text = await response.text();
+    let data;
+
+    try { data = JSON.parse(text); }
+    catch { data = text; }
+
+    if (!response.ok) {
+      setFormStatus(`Update failed: ${response.status}`, 'error');
+      setDebug(data);
+      return;
     }
- 
-    /*
-      Event listeners:
-      These tell the page what to do when each button is clicked.
-    */
-    addBtn.addEventListener('click', addStudent);
-    updateBtn.addEventListener('click', updateStudent);
-    deleteBtn.addEventListener('click', deleteStudent);
-    clearBtn.addEventListener('click', clearInputs);
- 
-    /*
-      When the page first opens, load the students table.
-    */
-    loadStudents();
+
+    setFormStatus(`Updated student ID ${id}.`, 'ok');
+    clearInputs();
+    await loadStudents();
+  } catch (err) {
+    setFormStatus('Update error: ' + err.message, 'error');
+    setDebug({ error: err.message });
+  }
+}
+
+async function deleteStudent() {
+  const id = getIdValue();
+
+  if (Number.isNaN(id)) {
+    setFormStatus('Please enter a student ID.', 'error');
+    return;
+  }
+
+  setFormStatus(`Deleting student ID ${id}...`, 'warn');
+
+  try {
+    const response = await fetch(`${supabaseUrl}/rest/v1/students?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer: 'return=representation'
+      }
+    });
+
+    const text = await response.text();
+    let data;
+
+    try { data = JSON.parse(text); }
+    catch { data = text; }
+
+    if (!response.ok) {
+      setFormStatus(`Delete failed: ${response.status}`, 'error');
+      setDebug(data);
+      return;
+    }
+
+    setFormStatus(`Deleted student ID ${id}.`, 'ok');
+    clearInputs();
+    await loadStudents();
+  } catch (err) {
+    setFormStatus('Delete error: ' + err.message, 'error');
+    setDebug({ error: err.message });
+  }
+}
+
+addBtn.addEventListener('click', addStudent);
+updateBtn.addEventListener('click', updateStudent);
+deleteBtn.addEventListener('click', deleteStudent);
+clearBtn.addEventListener('click', clearInputs);
+
+loadStudents();
 </script>
+
 </body>
 </html>
+
